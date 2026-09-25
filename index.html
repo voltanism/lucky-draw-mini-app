@@ -4,138 +4,476 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lucky Draw</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
   <style>
     * {
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
       margin: 0;
       min-height: 100vh;
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #17122b, #32145c);
+      background: linear-gradient(145deg, #120d24, #32165c);
       color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
 
     .app {
       width: 100%;
-      max-width: 430px;
-      padding: 25px;
+      max-width: 440px;
+      margin: auto;
+      padding: 22px 18px 35px;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: 800;
+    }
+
+    .tickets {
+      background: rgba(255,255,255,.12);
+      padding: 9px 13px;
+      border-radius: 14px;
+      font-weight: bold;
+    }
+
+    .welcome {
+      color: #cfc3df;
+      margin-bottom: 20px;
+    }
+
+    .main-card {
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 26px;
+      padding: 25px 20px;
       text-align: center;
+      box-shadow: 0 15px 40px rgba(0,0,0,.25);
+    }
+
+    .gift {
+      font-size: 78px;
+      margin: 8px 0;
     }
 
     h1 {
-      font-size: 38px;
-      margin-bottom: 8px;
+      margin: 5px 0;
+      font-size: 31px;
     }
 
     .subtitle {
-      color: #c9bddf;
-      margin-bottom: 30px;
+      color: #cfc3df;
+      margin-bottom: 24px;
     }
 
-    .card {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 25px;
-      padding: 25px;
-      backdrop-filter: blur(10px);
-    }
-
-    .prize {
-      font-size: 70px;
-      margin: 10px;
-    }
-
-    .winner {
-      min-height: 45px;
-      font-size: 24px;
+    .result {
+      min-height: 58px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 22px;
       font-weight: bold;
-      margin: 20px 0;
+      margin: 10px 0 22px;
     }
 
     button {
       width: 100%;
-      border: 0;
-      border-radius: 15px;
+      border: none;
+      border-radius: 16px;
       padding: 17px;
       font-size: 19px;
-      font-weight: bold;
+      font-weight: 800;
       cursor: pointer;
       background: #ffd43b;
-      color: #21172e;
+      color: #20162d;
     }
 
-    button:active {
-      transform: scale(0.97);
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
     }
 
-    .info {
-      margin-top: 20px;
-      color: #c9bddf;
-      font-size: 14px;
+    button:active:not(:disabled) {
+      transform: scale(.97);
+    }
+
+    .section {
+      margin-top: 18px;
+      background: rgba(255,255,255,.07);
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 13px;
+    }
+
+    .prize {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .prize:last-child {
+      border-bottom: 0;
+    }
+
+    .prize-name {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .odds {
+      color: #cfc3df;
+      font-size: 13px;
+    }
+
+    .buy {
+      margin-top: 12px;
+      background: #8e63ff;
+      color: white;
+    }
+
+    .status {
+      text-align: center;
+      color: #aaa0b9;
+      font-size: 13px;
+      margin-top: 18px;
+    }
+
+    .win {
+      animation: pop .45s ease;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(.7); opacity: .2; }
+      70% { transform: scale(1.12); }
+      100% { transform: scale(1); opacity: 1; }
     }
   </style>
 </head>
 
 <body>
 
-  <div class="app">
+<div class="app">
 
-    <h1>🎰 Lucky Draw</h1>
-    <div class="subtitle">Try your luck!</div>
+  <div class="top">
+    <div class="logo">🎰 Lucky Draw</div>
+    <div class="tickets">🎟️ <span id="ticketCount">3</span></div>
+  </div>
 
-    <div class="card">
+  <div class="welcome" id="welcome">
+    Welcome!
+  </div>
 
-      <div class="prize">🎁</div>
+  <div class="main-card">
 
-      <h2>Daily Lucky Draw</h2>
+    <div class="gift">🎁</div>
 
-      <div class="winner" id="result">
-        Ready?
+    <h1>Lucky Draw</h1>
+
+    <div class="subtitle">
+      Use 1 ticket for every draw
+    </div>
+
+    <div class="result" id="result">
+      Ready? 🍀
+    </div>
+
+    <button id="drawButton" onclick="draw()">
+      🎲 DRAW — 1 TICKET
+    </button>
+
+  </div>
+
+  <div class="section">
+
+    <div class="section-title">
+      🎁 Possible Prizes
+    </div>
+
+    <div class="prize">
+      <div class="prize-name">
+        🏆 <span>Jackpot</span>
       </div>
+      <div class="odds">1%</div>
+    </div>
 
-      <button onclick="draw()">
-        🎲 DRAW
-      </button>
-
-      <div class="info">
-        Good luck! 🍀
+    <div class="prize">
+      <div class="prize-name">
+        💎 <span>Big Prize</span>
       </div>
+      <div class="odds">5%</div>
+    </div>
 
+    <div class="prize">
+      <div class="prize-name">
+        🎁 <span>Small Prize</span>
+      </div>
+      <div class="odds">24%</div>
+    </div>
+
+    <div class="prize">
+      <div class="prize-name">
+        🍀 <span>Better Luck Next Time</span>
+      </div>
+      <div class="odds">70%</div>
     </div>
 
   </div>
 
-  <script>
-    function draw() {
+  <div class="section">
 
-      const names = [
-        "🎉 You Won!",
-        "🍀 Lucky!",
-        "💰 Jackpot!",
-        "🔥 Big Winner!",
-        "🎁 You Won a Prize!",
-        "⭐ Congratulations!"
-      ];
+    <div class="section-title">
+      ⭐ Get More Tickets
+    </div>
 
-      const result = document.getElementById("result");
+    <div style="color:#cfc3df;font-size:14px;margin-bottom:12px;">
+      Buy additional tickets with Telegram Stars.
+    </div>
 
-      result.textContent = "🎲 Drawing...";
+    <button class="buy" onclick="buyTickets()">
+      ⭐ BUY 5 TICKETS
+    </button>
 
-      setTimeout(() => {
+  </div>
 
-        const random =
-          names[Math.floor(Math.random() * names.length)];
+  <div class="status" id="status">
+    Demo version
+  </div>
 
-        result.textContent = random;
+</div>
 
-      }, 1200);
+
+<script>
+
+  const tg = window.Telegram && window.Telegram.WebApp;
+
+  if (tg) {
+    tg.ready();
+    tg.expand();
+  }
+
+
+  // -------------------------
+  // USER
+  // -------------------------
+
+  let userName = "Player";
+
+  if (
+    tg &&
+    tg.initDataUnsafe &&
+    tg.initDataUnsafe.user
+  ) {
+
+    const user = tg.initDataUnsafe.user;
+
+    if (user.first_name) {
+      userName = user.first_name;
     }
-  </script>
+
+  }
+
+  document.getElementById("welcome").textContent =
+    "Welcome, " + userName + " 👋";
+
+
+  // -------------------------
+  // TICKETS
+  // -------------------------
+
+  let tickets = Number(
+    localStorage.getItem("luckyTickets")
+  );
+
+  if (!Number.isFinite(tickets)) {
+    tickets = 3;
+  }
+
+  updateTickets();
+
+
+  function updateTickets() {
+
+    document.getElementById("ticketCount").textContent =
+      tickets;
+
+    const button =
+      document.getElementById("drawButton");
+
+    button.disabled = tickets <= 0;
+
+    if (tickets <= 0) {
+      button.textContent = "🎟️ NO TICKETS";
+    } else {
+      button.textContent =
+        "🎲 DRAW — 1 TICKET";
+    }
+
+  }
+
+
+  // -------------------------
+  // DRAW
+  // -------------------------
+
+  function draw() {
+
+    if (tickets <= 0) {
+      showStatus("You don't have any tickets.");
+      return;
+    }
+
+    tickets--;
+
+    localStorage.setItem(
+      "luckyTickets",
+      tickets
+    );
+
+    updateTickets();
+
+    const result =
+      document.getElementById("result");
+
+    result.classList.remove("win");
+
+    result.textContent =
+      "🎲 Drawing...";
+
+    showStatus("Good luck! 🍀");
+
+
+    setTimeout(() => {
+
+      const random =
+        Math.random() * 100;
+
+      let prize;
+
+      if (random < 1) {
+
+        prize = "🏆 JACKPOT!";
+
+      } else if (random < 6) {
+
+        prize = "💎 BIG PRIZE!";
+
+      } else if (random < 30) {
+
+        prize = "🎁 SMALL PRIZE!";
+
+      } else {
+
+        prize = "🍀 Better luck next time!";
+
+      }
+
+
+      result.textContent = prize;
+
+      result.classList.add("win");
+
+
+      if (
+        prize.includes("JACKPOT") ||
+        prize.includes("BIG PRIZE") ||
+        prize.includes("SMALL PRIZE")
+      ) {
+
+        showStatus(
+          "Congratulations, " +
+          userName +
+          "! 🎉"
+        );
+
+        if (tg && tg.HapticFeedback) {
+          tg.HapticFeedback.notificationOccurred(
+            "success"
+          );
+        }
+
+      } else {
+
+        showStatus(
+          "Try again with another ticket."
+        );
+
+      }
+
+    }, 1200);
+
+  }
+
+
+  // -------------------------
+  // BUY TICKETS
+  // -------------------------
+
+  function buyTickets() {
+
+    /*
+      DEMO ONLY.
+
+      Real Telegram Stars payments
+      will be connected later through
+      the Telegram Bot API/backend.
+
+      We intentionally don't give free
+      tickets here, because the real
+      payment system must verify payment
+      on the server.
+    */
+
+    showStatus(
+      "⭐ Stars payment will be connected next."
+    );
+
+    if (tg && tg.showAlert) {
+
+      tg.showAlert(
+        "Telegram Stars payment will be connected in the next version."
+      );
+
+    } else {
+
+      alert(
+        "Telegram Stars payment will be connected in the next version."
+      );
+
+    }
+
+  }
+
+
+  // -------------------------
+  // STATUS
+  // -------------------------
+
+  function showStatus(message) {
+
+    document.getElementById("status")
+      .textContent = message;
+
+  }
+
+</script>
 
 </body>
 </html>
