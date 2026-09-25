@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lucky Draw</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #17122b, #32145c);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 430px;
+      padding: 25px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 38px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #c9bddf;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 25px;
+      padding: 25px;
+      backdrop-filter: blur(10px);
+    }
+
+    .prize {
+      font-size: 70px;
+      margin: 10px;
+    }
+
+    .winner {
+      min-height: 45px;
+      font-size: 24px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 15px;
+      padding: 17px;
+      font-size: 19px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #ffd43b;
+      color: #21172e;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .info {
+      margin-top: 20px;
+      color: #c9bddf;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <h1>🎰 Lucky Draw</h1>
+    <div class="subtitle">Try your luck!</div>
+
+    <div class="card">
+
+      <div class="prize">🎁</div>
+
+      <h2>Daily Lucky Draw</h2>
+
+      <div class="winner" id="result">
+        Ready?
+      </div>
+
+      <button onclick="draw()">
+        🎲 DRAW
+      </button>
+
+      <div class="info">
+        Good luck! 🍀
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function draw() {
+
+      const names = [
+        "🎉 You Won!",
+        "🍀 Lucky!",
+        "💰 Jackpot!",
+        "🔥 Big Winner!",
+        "🎁 You Won a Prize!",
+        "⭐ Congratulations!"
+      ];
+
+      const result = document.getElementById("result");
+
+      result.textContent = "🎲 Drawing...";
+
+      setTimeout(() => {
+
+        const random =
+          names[Math.floor(Math.random() * names.length)];
+
+        result.textContent = random;
+
+      }, 1200);
+    }
+  </script>
+
+</body>
+</html>
