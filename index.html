@@ -298,15 +298,21 @@
   // TICKETS
   // -------------------------
 
-  let tickets = Number(
-    localStorage.getItem("luckyTickets")
-  );
+  let savedTickets = localStorage.getItem("luckyTickets");
 
-  if (!Number.isFinite(tickets)) {
-    tickets = 3;
-  }
+let tickets;
 
-  updateTickets();
+if (
+  savedTickets === null ||
+  Number(savedTickets) <= 0
+) {
+  tickets = 3;
+  localStorage.setItem("luckyTickets", tickets);
+} else {
+  tickets = Number(savedTickets);
+}
+
+updateTickets();
 
 
   function updateTickets() {
